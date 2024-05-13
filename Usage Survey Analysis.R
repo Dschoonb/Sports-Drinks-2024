@@ -24,10 +24,6 @@ All.groups <- cutree(All.clust.cd, k=5)
 All.df$Cluster <- All.groups
 write.csv(All.df, "All.csv", row.names=FALSE)
 
-#Kmeans
-kfit <- kmeans(All.clust.d, 5)
-clusplot(as.matrix(All.clust.d), kfit$cluster, color=T, shade=T, labels=2, lines=0)
-
 
 # Exercise Users ---------------------------------------------------------------
 EU<- read_excel("Usage Survey Results.xlsx", 
@@ -48,6 +44,22 @@ EU.groups <- cutree(EU.clust.cd, k=5)
 EU.df$Cluster <- EU.groups
 write.csv(EU.df, "EU.csv", row.names=FALSE)
 
-#Kmeans
-kfit <- kmeans(EU.clust.d, 5)
-clusplot(as.matrix(EU.clust.d), kfit$cluster, color=T, shade=T, labels=2, lines=0)
+# Activity-Wise ---------------------------------------------------------------
+#Team Sports - redo
+TS <- read_excel("Activity-Wise.xlsx", 
+    sheet = "Team Sports")
+
+#Distance Matrix
+TS.clust <- as.matrix(TS)
+TS.clust.d <- dist(TS.clust, method = "binary")
+
+#Hierarchical Cluster Analysis
+TS.clust.cd <- hclust(TS.clust.d, method="ward.D2")
+plot(TS.clust.cd, cex = 0.8, hang= -1)
+rect.hclust(TS.clust.cd, k=2, border="red")
+
+#Clusters to Column
+TS.df <- as.data.frame(TS)
+TS.groups <- cutree(TS.clust.cd, k=2)
+TS.df$Cluster <- TS.groups
+write.csv(TS.df, "TS.csv", row.names=FALSE)
