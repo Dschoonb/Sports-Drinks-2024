@@ -52,18 +52,11 @@ EU.groups <- cutree(EU.clust.cd, k=4)
 EU.df$Cluster <- EU.groups
 write.csv(EU.df, "EU.csv", row.names=FALSE)
 
-<<<<<<< HEAD
-# Activity-Wise ---------------------------------------------------------------
-#Team Sports - redo
-TS <- read_excel("Activity-Wise.xlsx", 
-    sheet = "Team Sports")
-=======
 
 
 # Activity Wise -----------------------------------------------------------
 #Team Sports
 TS<- read_excel("ActivityWise.xlsx", sheet = "Team Sports-R")
->>>>>>> 045ef66ea6f36942a810c22e6699c79eeef2ffe9
 
 #Distance Matrix
 TS.clust <- as.matrix(TS)
@@ -72,7 +65,6 @@ TS.clust.d <- dist(TS.clust, method = "binary")
 #Hierarchical Cluster Analysis
 TS.clust.cd <- hclust(TS.clust.d, method="ward.D2")
 plot(TS.clust.cd, cex = 0.8, hang= -1)
-<<<<<<< HEAD
 rect.hclust(TS.clust.cd, k=2, border="red")
 
 #Clusters to Column
@@ -80,7 +72,6 @@ TS.df <- as.data.frame(TS)
 TS.groups <- cutree(TS.clust.cd, k=2)
 TS.df$Cluster <- TS.groups
 write.csv(TS.df, "TS.csv", row.names=FALSE)
-=======
 rect.hclust(TS.clust.cd, k=3, border="red")
 
 #Clusters to Column
