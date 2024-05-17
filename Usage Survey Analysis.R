@@ -29,7 +29,7 @@ write.csv(All.df, "All.csv", row.names=FALSE)
 EU<- read_excel("Usage Survey Results_4R.xlsx", 
                  sheet = "Exercisers")
 
-EU <- EU[,-c(2:6)]
+EU <- EU[,-c(2:19,)]
 
 #Distance Matrix
 EU.clust <- as.matrix(EU)
@@ -49,6 +49,27 @@ write.csv(EU.df, "EU.csv", row.names=FALSE)
 
 
 # Activity Wise -----------------------------------------------------------
+#All
+Act<- read_excel("Usage Survey Results_4R.xlsx", 
+                sheet = "Activitywise")
+
+#Distance Matrix
+Act.clust <- as.matrix(Act)
+Act.clust.d <- dist(Act.clust, method = "binary")
+
+#Hierarchical Cluster Analysis
+Act.clust.cd <- hclust(Act.clust.d, method="ward.D2")
+plot(Act.clust.cd, cex = 0.8, hang= -1)
+rect.hclust(Act.clust.cd, k=4, border="red")
+
+#Clusters to Column
+Act.df <- as.data.frame(Act)
+Act.groups <- cutree(Act.clust.cd, k=4)
+Act.df$Cluster <- Act.groups
+write.csv(Act.df, "Act.csv", row.names=FALSE)
+
+
+
 #Team Sports
 TS<- read_excel("ActivityWise.xlsx", sheet = "Team Sports-R")
 
@@ -151,6 +172,25 @@ write.csv(Yoga.df, "Yoga.csv", row.names=FALSE)
 
 
 # Motivation Wise ---------------------------------------------------------
+#All
+Mot<- read_excel("Usage Survey Results_4R.xlsx", 
+                 sheet = "Motivationwise")
+
+#Distance Matrix
+Mot.clust <- as.matrix(Mot)
+Mot.clust.d <- dist(Mot.clust, method = "binary")
+
+#Hierarchical Cluster Analysis
+Mot.clust.cd <- hclust(Mot.clust.d, method="ward.D2")
+plot(Mot.clust.cd, cex = 0.8, hang= -1)
+rect.hclust(Mot.clust.cd, k=2, border="red")
+
+#Clusters to Column
+Mot.df <- as.data.frame(Mot)
+Mot.groups <- cutree(Mot.clust.cd, k=2)
+Mot.df$Cluster <- Mot.groups
+write.csv(Mot.df, "Mot.csv", row.names=FALSE)
+
 #Hydration
 hyd<- read_excel("MotivationWise.xlsx", 
                 sheet = "Hydration-R")
