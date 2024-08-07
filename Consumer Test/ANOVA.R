@@ -32,7 +32,8 @@ summary(Approp.aov1)
 
 
 
-#Duplicate Center Removed Dataset (2)
+#Duplicate Center Removed Dataset (2) 
+    #This was done to remove the unbalancedness the duplicate sample would give
 DataAov2 <- read_excel("Consumer Test/Liking and Appropriateness.xlsx", sheet = "DupCentRem")
 
 str(DataAov2)
@@ -44,64 +45,49 @@ DataAov2$Salt <- as.factor(DataAov2$Salt)
 DataAov2$Sucrose <- as.factor(DataAov2$Sucrose)
 str(DataAov2)
 
-
-Hedonic.aov2 <- aov(Liking~(Context*Sample+Subject+Order), DataAov2)
-summary(Hedonic.aov2) 
-
-Approp.aov2 <- aov(Appropriateness~(Context*Sample+Subject+Order), DataAov2)
-summary(Approp.aov2) 
-
-    #checking for multicolinearity (Non found)
+#checking for multicolinearity (None found)
 colcheck2 <- lm(Liking~ Salt + Sucrose, data = DataAov2)
 vif(colcheck2)
 
+Hedonic.aov2 <- aov(Liking~(Context+Salt+Sucrose+Subject), DataAov2)
+summary(Hedonic.aov2) 
+#Salt and Subject Significant
+
+Approp.aov2 <- aov(Appropriateness~(Context*Salt+Sucrose+Subject), DataAov2)
+summary(Approp.aov2) 
+#Salt, Subject, and Salt*Context Significant
 
 
 
 
+# Regression --------------------------------------------------------------
+DataReg1 <- read_excel("Consumer Test/Liking and Appropriateness.xlsx", sheet = "DupCentRem")
+
+model_liking <- lm(Liking ~ Salt + Sucrose, data = DataReg1)
+summary(model_liking)
+
+model_appropriateness <- lm(Appropriateness ~ Salt + Sucrose, data = DataReg1)
+summary(model_appropriateness)
+#Sucrose is not significant in our models so MLR is not needed and we can continue without fear of having a confounding factor (sucrose) effect out center treatment
+
+#SLR
+library(tidyverse)
+
+Cardio <-  filter(DataReg1, "Cardio" == `Context`)
+Neutral <-  filter(DataReg1, "Neutral" == `Context`)
 
 
-#Both Centers Removed Dataset (3)
-DataAov3 <- read_excel("Consumer Test/Liking and Appropriateness.xlsx", sheet = "CentRem")
+ggplot() +
+  geom_jitter(data = Cardio, aes(x = Salt, y = Liking), color = "gold") +
+  geom_smooth(data = Cardio, aes(x = Salt, y = Liking), color = "gold", method = "lm", se = FALSE) +
+  geom_jitter(data = Neutral, aes(x = Salt, y = Liking), color = "dodgerblue") +
+  geom_smooth(data = Neutral, aes(x = Salt, y = Liking), color = "dodgerblue", method = "lm", se = FALSE)
 
-str(DataAov3)
-DataAov3$Subject <- as.factor(DataAov3$Subject)
-DataAov3$Context <- as.factor(DataAov3$Context)
-DataAov3$Order <- as.factor(DataAov3$Order)
-DataAov3$Sample <- as.factor(DataAov3$Sample)
-DataAov3$Salt <- as.factor(DataAov3$Salt)
-DataAov3$Sucrose <- as.factor(DataAov3$Sucrose)
-str(DataAov3)
-
-
-Hedonic.aov3 <- aov(Liking~(Context*Salt + Sucrose + Subject), DataAov3)
-summary(Hedonic.aov3) 
-
-Approp.aov3 <- aov(Appropriateness~(Context*Salt + Sucrose + Subject), DataAov3)
-summary(Approp.aov3) 
-
-
-
-
-
-
-# MLR ---------------------------------------------------------------------
-
-#Full Dataset
-#Cannot be performed with full dataset due to unbalanced design with center
-#DupCentRemoved (Issues with multicolinearity with center observation) 
-
-Data3MLR <- read_excel("Consumer Test/Liking and Appropriateness.xlsx", sheet = "CentRem")
-
-
-
-
-
-
-
-
-
-
+ggplot() +
+  geom_jitter(data = Cardio, aes(x = Salt, y = Appropriateness), color = "gold") +
+  geom_smooth(data = Cardio, aes(x = Salt, y = Appropriateness), color = "gold", method = "lm", se = FALSE) +
+  geom_jitter(data = Neutral, aes(x = Salt, y = Appropriateness), color = "dodgerblue") +
+  geom_smooth(data = Neutral, aes(x = Salt, y = Appropriateness), color = "dodgerblue", method = "lm", se = FALSE)
 
 
 
