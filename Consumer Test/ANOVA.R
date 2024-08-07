@@ -63,10 +63,14 @@ summary(Approp.aov2)
 # Regression --------------------------------------------------------------
 DataReg1 <- read_excel("Consumer Test/Liking and Appropriateness.xlsx", sheet = "DupCentRem")
 
-model_liking <- lm(Liking ~ Salt + Sucrose, data = DataReg1)
+model_liking <- lm(Liking ~ Salt, data = Cardio)
+summary(model_liking)
+model_liking <- lm(Liking ~ Salt, data = Neutral)
 summary(model_liking)
 
-model_appropriateness <- lm(Appropriateness ~ Salt + Sucrose, data = DataReg1)
+model_appropriateness <- lm(Appropriateness ~ Salt, data = Cardio)
+summary(model_appropriateness)
+model_appropriateness <- lm(Appropriateness ~ Salt, data = Neutral)
 summary(model_appropriateness)
 #Sucrose is not significant in our models so MLR is not needed and we can continue without fear of having a confounding factor (sucrose) effect out center treatment
 
@@ -90,4 +94,45 @@ ggplot() +
   geom_smooth(data = Neutral, aes(x = Salt, y = Appropriateness), color = "dodgerblue", method = "lm", se = FALSE)
 
 
+# Box Plots ---------------------------------------------------------------
+library(RColorBrewer)
+library(readr)
+library(dplyr)
+library(ggsignif)
+library(plyr)
 
+
+#generating data sets w/ means and standard deviations for bar plot error bars
+data_summary <- function(data, varname, groupnames){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)}
+
+
+Liking.sd <- data_summary(DataReg1, varname="Liking",
+                            groupnames=c("Context", "Salt"))
+Appropriateness.sd<- data_summary(DataReg1, varname="Appropriateness",
+                          groupnames=c("Context", "Salt"))
+
+
+gg.Like <- ggplot(data = Liking.sd, aes(x=Salt,y=Liking)) +
+  geom_col() +
+  facet_grid(cols = vars(Context)) +
+  geom_errorbar(aes(ymax =Liking+(sd)/sqrt(80), ymin=Liking-(sd)/sqrt(80)), width=.2,
+                position=position_dodge(.9)) 
+gg.Like
+
+
+
+gg.Approp <- ggplot(data = Appropriateness.sd, aes(x=Salt,y=Appropriateness)) +
+  geom_col() +
+  facet_grid(cols = vars(Context)) +
+  geom_errorbar(aes(ymax =Appropriateness+(sd)/sqrt(80), ymin=Appropriateness-(sd)/sqrt(80)), width=.2,
+                position=position_dodge(.9)) 
+gg.Approp
